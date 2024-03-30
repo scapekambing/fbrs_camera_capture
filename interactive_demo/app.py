@@ -38,6 +38,7 @@ class InteractiveDemoApp(ttk.Frame):
         self._add_menu()
         self._add_canvas()
         self._add_buttons()
+        self._load_image_callback()
 
         master.bind('<space>', lambda event: self.controller.finish_object())
         master.bind('a', lambda event: self.controller.partially_finish_object())
@@ -76,8 +77,8 @@ class InteractiveDemoApp(ttk.Frame):
         self.menubar = FocusLabelFrame(self, bd=1)
         self.menubar.pack(side=tk.TOP, fill='x')
 
-        button = FocusButton(self.menubar, text='Load image', command=self._load_image_callback)
-        button.pack(side=tk.LEFT)
+        # button = FocusButton(self.menubar, text='Load image', command=self._load_image_callback)
+        # button.pack(side=tk.LEFT)
         button = FocusButton(self.menubar, text='Save mask', command=self._save_mask_callback)
         button.pack(side=tk.LEFT)
         button = FocusButton(self.menubar, text='About', command=self._about_callback)
@@ -201,6 +202,7 @@ class InteractiveDemoApp(ttk.Frame):
                 self._set_image(0)
 
     def _save_mask_callback(self):
+        self.controller.finish_object()
         self.menubar.focus_set()
         if self._check_entry(self):
             mask = self.controller.result_mask
@@ -209,17 +211,13 @@ class InteractiveDemoApp(ttk.Frame):
             if 0 < mask.max() < 256:
                 mask *= 255 // mask.max()
 
-            filename = filedialog.asksaveasfilename(parent=self.master, initialfile='{}_mask.png'.format(self.filename[:-4]), filetypes=[
-                ("PNG image", "*.png"),
-                ("BMP image", "*.bmp"),
-                ("All files", "*.*"),
-            ], title="Save current mask as...")
-
+            filename = '{}_mask.png'.format(self.filename[:-4])
             if len(filename) > 0:
                 if mask.max() < 256:
                     mask = mask.astype(np.uint8)
                 mask_rgb = color_mask(mask)
                 cv2.imwrite(filename, mask_rgb)
+                self.master.quit()
 
     def _about_callback(self):
         self.menubar.focus_set()

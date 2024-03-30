@@ -29,11 +29,11 @@ to install the Pytorch requirements, follow the **pip** instructions in https://
     # You can try the demo in CPU only mode
     py demo.py --checkpoint=resnet34_dh128_sbd --cpu
     ```
-3. Hit load image which will launch the camera
+3. The camera will launch
 4. Press 'q' when desired pose has been made
 5. This will load the image onto the f-BRS interactive demo canvas
 6. You can now perform the desired f-BRS segmentation! 
-7. Hit 'Finish object' when done segmenting and then 'Save mask'
+7. Hit 'Save mask'
 
 # Pretrained models
 The pretrained models with different backbones for interactive segmentation were provided in the original repository. The following is reiterated from the original repository.

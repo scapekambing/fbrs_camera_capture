@@ -6,3 +6,5 @@ datasets
 *.so
 *.ipynb_checkpoints*
 *.json
+*.jpg
+*.png
