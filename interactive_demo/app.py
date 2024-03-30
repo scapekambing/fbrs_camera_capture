@@ -10,6 +10,7 @@ from interactive_demo.canvas import CanvasImage
 from interactive_demo.controller import InteractiveController
 from interactive_demo.wrappers import BoundedNumericalEntry, FocusHorizontalScale, FocusCheckButton, \
     FocusButton, FocusLabelFrame
+from interactive_demo.utils import take_photo, color_mask
 
 class InteractiveDemoApp(ttk.Frame):
     def __init__(self, master, args, model):
@@ -195,10 +196,7 @@ class InteractiveDemoApp(ttk.Frame):
     def _load_image_callback(self):
         self.menubar.focus_set()
         if self._check_entry(self):
-            self.filenames = filedialog.askopenfilenames(parent=self.master, filetypes=[
-                ("Images", "*.jpg *.JPG *.jpeg *.png *.bmp *.tiff"),
-                ("All files", "*.*"),
-            ], title="Chose an image")
+            self.filenames = take_photo()
             if len(self.filenames) > 0:
                 self._set_image(0)
 
@@ -211,7 +209,7 @@ class InteractiveDemoApp(ttk.Frame):
             if 0 < mask.max() < 256:
                 mask *= 255 // mask.max()
 
-            filename = filedialog.asksaveasfilename(parent=self.master, initialfile='{}.png'.format(self.filename), filetypes=[
+            filename = filedialog.asksaveasfilename(parent=self.master, initialfile='{}_mask.png'.format(self.filename[:-4]), filetypes=[
                 ("PNG image", "*.png"),
                 ("BMP image", "*.bmp"),
                 ("All files", "*.*"),
@@ -220,7 +218,8 @@ class InteractiveDemoApp(ttk.Frame):
             if len(filename) > 0:
                 if mask.max() < 256:
                     mask = mask.astype(np.uint8)
-                cv2.imwrite(filename, mask)
+                mask_rgb = color_mask(mask)
+                cv2.imwrite(filename, mask_rgb)
 
     def _about_callback(self):
         self.menubar.focus_set()
